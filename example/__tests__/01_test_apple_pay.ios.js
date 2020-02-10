@@ -15,90 +15,72 @@ test('Test if user can use Apple Pay', async (t) => {
 
   await openTestSuite('Pay')
 
-  let elem = await driver.$(applePayButtonId)
-  await elem.waitForDisplayed(30000)
+  await driver.waitForVisible(applePayButtonId, 30000)
   t.pass('User should see `Pay with Pay` button')
 
-  await elem.click()
+  await driver.click(applePayButtonId)
   t.pass('User should be able to tap on `Pay with Pay` button')
 
-  elem = await driver.$(payWithPasscodeButtonId)
-  await elem.waitForDisplayed(30000)
+  await driver.waitForVisible(payWithPasscodeButtonId, 30000)
   t.pass('User should see Pay form')
 
-  await elem.click()
+  await driver.click(payWithPasscodeButtonId)
   t.pass('User should accept Pay payment')
 
-  elem = await driver.$(tokenId)
-  await elem.waitForDisplayed(60000)
+  await driver.waitForVisible(tokenId, 60000)
   t.pass('User should see token')
 
-  elem = await driver.$(statusId)
-  t.equal(elem.getText(), 'Apple Pay payment completed', 'Apple Pay payment should be completed')
+  t.equal(
+    await driver.getText(statusId),
+    'Apple Pay payment completed',
+    'Apple Pay payment should be completed'
+  )
 
-  elem = await driver.$(applePaySwitchId)
-  await elem.click()
+  await driver.click(applePaySwitchId)
   t.pass('User should be able to tap on `Complete/Cancel` switch')
 
-  elem = await driver.$(applePayButtonId)
-  await elem.click()
+  await driver.click(applePayButtonId)
   t.pass('User should be able to tap on `Pay with Pay` button')
 
-  elem = await driver.$(payWithPasscodeButtonId)
-  await elem.waitForDisplayed(30000)
+  await driver.waitForVisible(payWithPasscodeButtonId, 30000)
   t.pass('User should see Pay form')
 
-  await elem.click()
+  await driver.click(payWithPasscodeButtonId)
   t.pass('User should accept Pay payment')
 
-  elem = await driver.$(tokenId)
-  await elem.waitForDisplayed(60000)
+  await driver.waitForVisible(tokenId, 60000)
   t.pass('User should see token')
 
-  elem = await driver.$(statusId)
-  t.equal(elem.getText(), 'Apple Pay payment canceled', 'Apple Pay payment should be canceled')
+  t.equal(
+    await driver.getText(statusId),
+    'Apple Pay payment cenceled',
+    'Apple Pay payment should be cenceled'
+  )
 
-  elem = await driver.$(deviceSupportsApplePayStatusId)
-  t.equal(elem.getText(), 'Device supports Pay', 'Device should support Pay')
+  t.equal(
+    await driver.getText(deviceSupportsApplePayStatusId),
+    'Device supports Pay',
+    'Device should support Pay'
+  )
 
-  const networks = [
-    'american_express',
-    'cartes_bancaires',
-    'china_union_pay',
-    'discover',
-    'eftpos',
-    'electron',
-    'elo',
-    'id_credit',
-    'interac',
-    'jcb',
-    'mada',
-    'maestro',
-    'master_card',
-    'private_label',
-    'quic_pay',
-    'suica',
-    'visa',
-    'vpay',
-  ]
-
-  for (const network of networks) {
-    elem = await driver.$(idFromAccessId(network))
-    const text = elem.getText()
-    t.equal(text, `${network} is available`, `${network} should be available`)
+  const cards = {
+    americanExpressAvailabilityStatus: 'American Express',
+    discoverAvailabilityStatus: 'Discover',
+    masterCardAvailabilityStatus: 'Master Card',
+    visaAvailabilityStatus: 'Visa',
   }
 
-  elem = await driver.$(idFromAccessId('FAKE_BANK'))
-  t.equal(elem.getText(), `FAKE_BANK is not available`, `FAKE_BANK should not be available`)
+  for (const [id, title] of Object.entries(cards)) {
+    const text = await driver.getText(idFromAccessId(id))
+    t.equal(text, `${title} is available`, `${title} should be available`)
+  }
 
-  elem = await driver.$(setupApplePayButtonId)
-  await elem.waitForDisplayed(30000)
+  await driver.waitForVisible(setupApplePayButtonId, 30000)
   t.pass('User should see `Setup Pay` button')
 
-  await elem.click()
+  await driver.click(setupApplePayButtonId)
   t.pass('User should be able to tap on `Setup Pay` button')
 
-  elem = await driver.$(setupApplePayButtonId)
-  await elem.waitForDisplayed(30000)
+  await driver.waitForVisible(setupApplePayButtonId, 30000)
   t.pass('User should still see `Setup Pay` button')
 })

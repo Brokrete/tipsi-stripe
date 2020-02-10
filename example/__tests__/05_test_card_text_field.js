@@ -3,7 +3,6 @@ import test from './utils/tape'
 import openTestSuite from './common/openTestSuite'
 
 const { driver, select, idFromAccessId, idFromResourceId } = helper
-const timeout = 60000
 
 test('Test if user can use PaymentCardTextField component', async (t) => {
   const cardTextFieldId = idFromAccessId('cardTextField')
@@ -33,8 +32,7 @@ test('Test if user can use PaymentCardTextField component', async (t) => {
 
   await openTestSuite('Card Text Field')
 
-  let elem = await driver.$(cardTextFieldId)
-  await elem.waitForDisplayed(timeout)
+  await driver.waitForVisible(cardTextFieldId, 15000)
   t.pass('User should see `PaymentCardTextField` component')
 
   /*
@@ -44,40 +42,27 @@ test('Test if user can use PaymentCardTextField component', async (t) => {
     expirationPlaceholder="MM/YY"
     cvcPlaceholder="123"
   */
-  elem = await driver.$(placeholderId)
-  const placeholder = await elem.getText()
+  const placeholder = await driver.getText(placeholderId)
   t.equal(placeholder, 'XXXX XXXX XXXX XXXX', 'Custom placeholder as expected')
 
-
-  elem = await driver.$(placeholderId)
-  await elem.waitForDisplayed(timeout)
-  await elem.click()
+  await driver.click(cardTextFieldId)
   t.pass('User should be able focus on `PaymentCardTextField` component')
 
   // Set card credentials
-  await elem.setValue("4242424242424242")
-
-  elem = await driver.$(inputExpData)
-  await elem.waitForDisplayed(timeout)
-  await elem.click()
-  await elem.setValue("12/34")
-
-  elem = await driver.$(inputCVC)
-  await elem.waitForDisplayed(timeout)
-  await elem.click()
-  await elem.setValue("123")
+  await driver.keys('42424242424242421234123')
 
   // Wait for expiration date and cvc
+  await driver.waitForVisible(inputExpData, 50000).waitForText(inputExpData)
+  await driver.waitForVisible(inputCVC, 50000).waitForText(inputCVC)
   t.pass('User should be able write card data on `PaymentCardTextField` component')
 
-
   t.equal(
-    await (await driver.$(cardPramIds.number)).getText(),
+    await driver.getText(cardPramIds.number),
     'Number: 4242424242424242',
     'Number should be 4242424242424242'
   )
-  t.equal(await (await driver.$(cardPramIds.expMonth)).getText(), 'Month: 12', 'Month should be 12')
-  t.equal(await (await driver.$(cardPramIds.expYear)).getText(), 'Year: 34', 'Year should be 34')
-  t.equal(await (await driver.$(cardPramIds.cvc)).getText(), 'CVC: 123', 'CVC should be 123')
-  t.equal(await (await driver.$(cardPramIds.valid)).getText(), 'Valid: true', 'Field should be valid')
+  t.equal(await driver.getText(cardPramIds.expMonth), 'Month: 12', 'Month should be 12')
+  t.equal(await driver.getText(cardPramIds.expYear), 'Year: 34', 'Year should be 34')
+  t.equal(await driver.getText(cardPramIds.cvc), 'CVC: 123', 'CVC should be 123')
+  t.equal(await driver.getText(cardPramIds.valid), 'Valid: true', 'Field should be valid')
 })
