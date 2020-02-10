@@ -4,7 +4,7 @@ title: .completeApplePayRequest() -> Promise
 sidebar_label: .completeApplePayRequest()
 ---
 
-__Method is deprecated, use [`completeNativePayRequest()`](completeNativePayRequest.md) instead.__
+__Method is deprecated, use completeNativePayRequest() instead.__
 
 After `paymentRequestWithApplePay` you should complete the operation by calling `completeApplePayRequest` .
 

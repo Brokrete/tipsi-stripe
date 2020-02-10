@@ -5,94 +5,71 @@ import nativeClick from './common/nativeClick'
 import clickUntilVisible from './common/clickUntilVisible'
 import idFromLabel from './common/idFromLabel'
 
-const { driver, idFromAccessId, idFromText, platform, select, screenshot } = helper
-const idFromContentDesc = text => `//*[@content-desc="${text}"]`  // TODO move to tipsi-appium-helper
-
-const timeout = 300000
+const { driver, idFromAccessId, platform, select } = helper
 
 test('Test if user can create a source object for a card', async (t) => {
   await openTestSuite('Sources')
 
   const sourceButtonId = idFromAccessId('cardSourceButton')
 
-  let elem = await driver.$(sourceButtonId)
-  await elem.waitForDisplayed(timeout)
+  await driver.waitForVisible(sourceButtonId, 60000)
   t.pass('User should see `Create a source with params` button')
 
-  await elem.click()
+  await driver.click(sourceButtonId)
   t.pass('User should be able to tap on `Create source for card payment` button')
 
   const sourceObjectId = idFromAccessId('sourceObject')
-  elem = await driver.$(sourceObjectId)
-  await elem.waitForDisplayed(timeout)
+  await driver.waitForVisible(sourceObjectId, 90000)
 })
 
-const alipay = async (t, target) => {
+test('Test if user can create a source object for Alipay', async (t) => {
+  const expectedSourcesResults = [false, true]
 
   await openTestSuite('Sources')
 
-  const sourceButtonId = idFromAccessId('sourceButton')
+  for (const sourcesVisibility of expectedSourcesResults) {
+    const sourceButtonId = idFromAccessId('sourceButton')
 
-  let elem = await driver.$(sourceButtonId)
-  await elem.waitForDisplayed(timeout)
-  t.pass('User should see `Create a source with params` button')
+    await driver.waitForVisible(sourceButtonId, 60000)
+    t.pass('User should see `Create a source with params` button')
 
-  await elem.click()
-  t.pass('User should be able to tap on `Create source for Alipay payment` button')
+    await driver.click(sourceButtonId)
+    t.pass('User should be able to tap on `Create source for Alipay payment` button')
 
-  const title = select({
-    ios: idFromLabel,
-    android: idFromContentDesc,
-  })('Alipay test payment page')
+    const testPaymentButtonId = select({
+      ios: idFromLabel,
+      android: idFromAccessId,
+    })(sourcesVisibility ? 'AUTHORIZE TEST PAYMENT' : 'FAIL TEST PAYMENT')
 
-  elem = await driver.$(title)
-  await elem.waitForDisplayed(timeout)
-  t.pass('User should be able to see `Alipay test payment page`')
+    await driver.waitForVisible(testPaymentButtonId, 90000)
 
-  const testPaymentButtonId = select({
-    ios: idFromLabel,
-    android: idFromContentDesc,
-  })(target)
+    if (platform('android')) {
+      const testPaymentButton = await driver.element(testPaymentButtonId)
+      const { value: buttonCoords } = await driver.elementIdLocation(
+        testPaymentButton.value.ELEMENT
+      )
 
-  elem = await driver.$(testPaymentButtonId)
-  await elem.waitForDisplayed(timeout)
+      await nativeClick(buttonCoords.x + 10, buttonCoords.y + 10)
+    } else {
+      await clickUntilVisible({ selector: testPaymentButtonId })
+    }
 
-  if (platform('android')) {
-    const testPaymentButton = await driver.$(testPaymentButtonId)
-    const loc = await testPaymentButton.getLocation()
+    t.pass('User should click on "Authorize Test Payment" button')
 
-    await nativeClick(loc.x + 10, loc.y + 10)
-  } else {
-    await clickUntilVisible({ selector: testPaymentButtonId })
+    const returnToTheAppButtonId = select({
+      ios: idFromLabel,
+      android: idFromAccessId,
+    })(select({ ios: 'Return to example', android: ' Return to Merchant' }))
+
+    await driver.waitForVisible(returnToTheAppButtonId, 60000)
+    await driver.click(returnToTheAppButtonId)
+    t.pass('User should click on "Return to example" button')
+
+    if (platform('ios')) {
+      const openButtonId = idFromLabel('Open')
+      await driver.waitForVisible(openButtonId, 60000)
+      await driver.click(openButtonId)
+      t.pass('User should click on "Open" button')
+    }
   }
-
-  t.pass('User should click on "Authorize Test Payment" button')
-
-  // Note: 'Return to Merchant' may be prefixed with 'arrow--left--white ' in some versions of Android
-  const returnToTheAppButtonId = select({
-    ios: idFromLabel,
-    android: text => `//*[contains(@content-desc, '${text}')]`,
-  })(select({ ios: 'Return to example', android: 'Return to Merchant' }))
-
-  elem = await driver.$(returnToTheAppButtonId)
-  await elem.waitForDisplayed(timeout)
-  await elem.click()
-  t.pass('User should click on "Return to example" button')
-
-  if (platform('ios')) {
-    const openButtonId = idFromLabel('Open')
-    elem = await driver.$(openButtonId)
-    await elem.waitForDisplayed(timeout)
-    await elem.click()
-    t.pass('User should click on "Open" button')
-  }
-}
-
-
-test('Test if user can authorize test payment on a source object for Alipay', async (t) => {
-  await alipay(t, 'AUTHORIZE TEST PAYMENT')
-})
-
-test('Test if user can fail test payment on a source object for Alipay', async (t) => {
-  await alipay(t, 'FAIL TEST PAYMENT')
 })

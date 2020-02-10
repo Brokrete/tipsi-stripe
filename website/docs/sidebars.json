@@ -9,22 +9,24 @@
       "google-pay",
       "usage",
       "example",
-      "paymentIntents",
-      "createCardOrSubscription",
-      "migrationIssues",
       "changelog"
     ],
     "Objects": [
       "token",
-      "source",
-      "paymentMethod"
+      "source"
     ],
-    "Native Pay -  & G": [
-      "canMakeNativePayPayments",
-      "deviceSupportsNativePay",
-      "potentiallyAvailableNativePayNetworks",
-      "completeNativePayRequest",
-      "cancelNativePayRequest"
+    " Pay": [
+      "openapplepaysetup",
+      "deviceSupportsApplePay",
+      "canmakeapplepaypaymentsoptions",
+      "paymentrequestwithapplepayitemsoptions",
+      "completeapplepayrequest",
+      "cancelapplepayrequest"
+    ],
+    "G Pay": [
+      "devicesupportsandroidpay",
+      "canmakeandroidpaypayments",
+      "paymentrequestwithandroidpay"
     ],
     "Card Form": ["paymentrequestwithcardform"],
     "Card Params Object": ["createtokenwithcard"],
@@ -41,17 +43,6 @@
       "troubleshooting-jest",
       "troubleshooting-tests",
       "troubleshooting-useframeworks-issue"
-    ],
-    "Deprecated Docs": [
-      "openapplepaysetup",
-      "deviceSupportsApplePay",
-      "devicesupportsandroidpay",
-      "canmakeandroidpaypayments",
-      "canmakeapplepaypaymentsoptions",
-      "paymentrequestwithandroidpay",
-      "paymentrequestwithapplepayitemsoptions",
-      "completeapplepayrequest",
-      "cancelapplepayrequest"
     ]
   }
 }

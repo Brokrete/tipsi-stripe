@@ -5,8 +5,7 @@ function requireFile(file, throwText) {
   try {
     return require(file)
   } catch (error) {
-    console.log(error)
-    throw new Error(throwText)
+    throw throwText
   }
 }
 

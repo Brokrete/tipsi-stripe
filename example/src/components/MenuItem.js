@@ -7,9 +7,11 @@ export default function MenuItem({ title, active, onPress, ...rest }) {
     <TouchableOpacity
       style={[styles.container, active && styles.active]}
       onPress={onPress}
-      {...rest}
-    >
-      <Text style={[styles.title, active && styles.activeTitle]}>{title}</Text>
+      {...rest}>
+      <Text
+        style={[styles.title, active && styles.activeTitle]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   )
 }
